@@ -7,13 +7,12 @@
 #define WW      lightbulb_group->ww
 #define WP      lightbulb_group->wp
 
+// References
 // https://gist.github.com/rasod/42eab9206e28ca91c8d9f926fa71a938
 // https://gist.github.com/unteins/6ecb69883d55ad8424b70be405bf4115
-// Ths is the main color mixing function
-// Takes in HSV, assigns PWM duty cycle to the lightbulb_group struct
-//https://github.com/espressif/esp-idf/examples/peripherals/rmt/led_strip/main/led_strip_main.c
-// ref5: https://github.com/patdie421/mea-edomus/blob/0eb0f9a8630ce610e3d1f6dd3c3a8d29d2dffea6/src/interfaces/type_004/philipshue_color.c
+// https://github.com/espressif/esp-idf/examples/peripherals/rmt/led_strip/main/led_strip_main.c
 // Bruce Lindbloom's website http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+// ref5: https://github.com/patdie421/mea-edomus/blob/0eb0f9a8630ce610e3d1f6dd3c3a8d29d2dffea6/src/interfaces/type_004/philipshue_color.c
 
 // Helper function to sum arrays
 float array_sum(float arr[], int num_elements) {
@@ -174,23 +173,6 @@ void hsi2rgbw(uint16_t h, uint16_t s, uint16_t v, ch_group_t* ch_group) {
     float gcR = (r > 0.04045f) ? fast_precise_pow((r + 0.055f) / (1.0f + 0.055f), 2.4f) : (r / 12.92f);
     float gcG = (g > 0.04045f) ? fast_precise_pow((g + 0.055f) / (1.0f + 0.055f), 2.4f) : (g / 12.92f);
     float gcB = (b > 0.04045f) ? fast_precise_pow((b + 0.055f) / (1.0f + 0.055f), 2.4f) : (b / 12.92f);
-    
-//    float p[2] = {(B[1]*gcR*R[0]*(G[0] - WP[0]) + gcR*G[1]*R[0]*WP[0] - gcG*G[0]*R[1]*WP[0] + B[1]*gcG*G[0]*(-R[0] + WP[0]) + B[0]*gcG*G[0]*(R[1] - WP[1]) + gcG*G[0]*R[0]*WP[1] - gcR*G[0]*R[0]*WP[1] + B[0]*gcR*R[0]*(-G[1] + WP[1]) + B[0]*gcB*(G[1]*(R[0] - WP[0]) + R[1]*WP[0] - R[0]*WP[1] + G[0]*(-R[1] + WP[1])))/(-(B[0]*gcR*G[1]) + gcB*G[1]*R[0] + B[0]*gcG*R[1] - gcB*G[0]*R[1] - gcB*G[1]*WP[0] + gcR*G[1]*WP[0] + gcB*R[1]*WP[0] - gcG*R[1]*WP[0] + B[1]*(gcR*(G[0] - WP[0]) + gcG*(-R[0] + WP[0])) + (B[0]*(-gcG + gcR) + gcB*G[0] - gcR*G[0] - gcB*R[0] + gcG*R[0])*WP[1]),
-//        ((gcG - gcR)*G[1]*R[1]*(B[0] - WP[0]) + (-(B[0]*gcG*G[1]) + gcG*G[1]*R[0] + B[0]*gcR*R[1] - gcR*G[0]*R[1])*WP[1] + B[1]*(gcR*R[1]*(G[0] - WP[0]) + gcG*G[1]*(-R[0] + WP[0]) + gcB*(-(G[0]*R[1]) + G[1]*(R[0] - WP[0]) + R[1]*WP[0] + G[0]*WP[1] - R[0]*WP[1])))/(-(B[0]*gcR*G[1]) + gcB*G[1]*R[0] + B[0]*gcG*R[1] - gcB*G[0]*R[1] - gcB*G[1]*WP[0] + gcR*G[1]*WP[0] + gcB*R[1]*WP[0] - gcG*R[1]*WP[0] + B[1]*(gcR*(G[0] - WP[0]) + gcG*(-R[0] + WP[0])) + (B[0]*(-gcG + gcR) + gcB*G[0] - gcR*G[0] - gcB*R[0] + gcG*R[0])*WP[1])
-//    };
-//    float X, Y, Z, x, y;
-    
-//    // sRGB
-//    X = 0.463735*gcR + 0.419345*gcG + 0.113213*gcB;
-//    Y = 0.233706*gcR + 0.715045*gcG + 0.0512496*gcB;
-//    Z = 0.00941927*gcR + 0.0784289*gcG + 0.521612*gcB;
-//
-//    //
-//
-//    x = X/(X+Y+Z);
-//    y = Y/(X+Y+Z);
-//
-//    float p[2] = {x,y};
     
     //sRGB Primaries
     float denom = gcB*(1.0849816845413038 - 1.013932032965188*WP[0] - 1.1309562993446372*WP[1]) + gcR*(-0.07763613020327381 + 0.6290345979071447*WP[0] + 0.28254416233165086*WP[1]) + gcG*(-0.007345554338030566 + 0.38489743505804436*WP[0] + 0.8484121370129867*WP[1]);
